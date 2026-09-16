@@ -67,7 +67,8 @@ elmo-hikes/
 
 ## Contributors
 - Nicholas M - I dont really know whats going on but i like to pretend that i do.
-- **Teammate Name** - BCIT CST Student, Frontend enthusiast with a knack for creative design. Fun fact: Has a collection of over 50 houseplants.
+- **Xander Eksteen** - BCIT CST Student with a passion for music, and interest in low level programming langagues.
+
 
 ---
 
