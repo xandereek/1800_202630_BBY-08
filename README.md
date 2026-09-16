@@ -66,7 +66,7 @@ elmo-hikes/
 
 
 ## Contributors
-- **Your Name** - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves solving Rubik's Cubes in under a minute.
+- Leon Ru - BCIT CST Student with a passion for gaming and reading. Fun fact: "Lord of the Mysteries" and its sequel "Cirle of Inevitability" is his favourite web novel.
 - **Teammate Name** - BCIT CST Student, Frontend enthusiast with a knack for creative design. Fun fact: Has a collection of over 50 houseplants.
 
 ---
