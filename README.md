@@ -62,15 +62,13 @@ elmo-hikes/
 ├── README.md
 ```
 
----
 
 
 ## Contributors
+- Alice - BCIT CST Student with a passion of gamimg, like playing minecraft on PC.
 - Nicholas M - I dont really know whats going on but i like to pretend that i do.
 - **Xander Eksteen** - BCIT CST Student with a passion for music, and interest in low level programming langagues.
 - Leon Ru - BCIT CST Student with a passion for gaming and reading. Fun fact: "Lord of the Mysteries" and its sequel "Cirle of Inevitability" is his favourite web novel.
-
-
 ---
 
 
@@ -101,3 +99,4 @@ elmo-hikes/
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
