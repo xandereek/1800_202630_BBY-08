@@ -32,14 +32,18 @@
 
             <a id="link_placing" target="_blank">Loading Link...</a>
 
-            <img src="https://placehold.co/300x200?text=Wireless+Headphones" class="img-thumbnail d-block mx-auto"
+            <img id="product_image" src="https://placehold.co/300x200?text=Wireless+Headphones" class="img-thumbnail d-block mx-auto"
                 alt="Wireless Headphones">
 
-            <h5 id="product_name">Wireless Headphones</h5>
+            <h5 id="product_name" class="mt-2">Wireless Headphones</h5>
 
-            <p>$49.99</p>
+            <div id="reliability_score" class="badge bg-secondary fs-6 my-2">Scanning score...</div>
 
-            <p>Seller: Example Store</p>
+            <p id="product_price">$49.99</p>
+
+            <p id="product_seller">Seller: Example Store</p>
+
+            <p id="product_details" class="text-muted small"></p>
 
         </div>
     </div>
@@ -100,7 +104,7 @@
 
     <!-- Link to scripts of your own -->
     <script type="module" src="./src/main.js"></script>
-    <script src="./src/listing_page.js"></script>
+    <script type="module" src="./src/listing_page.js"></script>
 
 </body>
 
