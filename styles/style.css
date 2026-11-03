@@ -1,3 +1,7 @@
+body {
+    padding-bottom: 70px;
+}
+
 .carousel-indicators button {
     background-color: black !important;
 }
