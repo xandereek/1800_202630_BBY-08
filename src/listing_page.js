@@ -14,7 +14,7 @@ function PullLink() {
     sessionStorage.setItem('input_link', input_link);
     console.log('link inputted: ' + input_link);
 }
-
+    
 async function PlaceLink() {
     console.log("PlaceLink() started");
 
