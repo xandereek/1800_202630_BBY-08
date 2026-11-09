@@ -32,8 +32,8 @@
 
             <a id="link_placing" target="_blank">Loading Link...</a>
 
-            <img id="product_image" src="https://placehold.co/300x200?text=Wireless+Headphones" class="img-thumbnail d-block mx-auto"
-                alt="Wireless Headphones">
+            <img id="product_image" src="https://placehold.co/300x200?text=Wireless+Headphones"
+                class="img-thumbnail d-block mx-auto" alt="Wireless Headphones">
 
             <h5 id="product_name" class="mt-2">Wireless Headphones</h5>
 
@@ -53,45 +53,12 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>User Reviews</h3>
             <div>
-                <button class="btn btn-primary" onclick="window.location.href='review_writing.html';">Write a review</button>
-                <button class="btn btn-secondary" onclick="window.location.href='review_page.html';">See all reviews</button>
+                <button class="btn btn-primary" id="to-write-review">Write a review</button>
+                <button class="btn btn-secondary" id="to-review-page">See all reviews</button>
             </div>
         </div>
-
-        <div class="card mb-3 w-100">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="images/avatar placeholder.jpg" class="img-fluid rounded-start w-25" alt="avatar img">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">User#1</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit. Amet
-                            consectetur adipiscing elit quisque faucibus ex sapien. Quisque faucibus ex sapien vitae
-                            pellentesque sem placerat. Vitae pellentesque sem placerat in id cursus mi.</p>
-                        <p class="card-text">&#x1F44D; 25 |&#x1F44E; 6</p>
-                        <p class="card-text"><small class="text-body-secondary">Posted 50 mins ago</small></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card mb-3 w-100">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="images/avatar placeholder.jpg" class="img-fluid rounded-start w-25" alt="avatar img">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">User#2</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit. Amet
-                            consectetur adipiscing elit quisque faucibus ex sapien. Quisque faucibus ex sapien vitae
-                            pellentesque sem placerat. Vitae pellentesque sem placerat in id cursus mi.</p>
-                        <p class="card-text">&#x1F44D; 9 |&#x1F44E; 30</p>
-                        <p class="card-text"><small class="text-body-secondary">Posted 6 mins ago</small></p>
-                    </div>
-                </div>
-            </div>
+        <div id="listing-reviews-container">
+            <!-- Posted Reviews go here.-->
         </div>
     </div>
     <br><br><br><br>
