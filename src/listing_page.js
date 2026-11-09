@@ -46,6 +46,7 @@ async function PlaceLink() {
         const nameElement = document.getElementById('product_name');
         if (nameElement) {
             nameElement.innerHTML = parsedTitle;
+            nameElement.value = parsedTitle;
         }
     } catch (err) {
         console.error('error parsing title:', err);
