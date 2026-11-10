@@ -37,7 +37,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">$</span>
             </div>
-            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)"
+            <input type="text" class="form-control" id="product_price" aria-label="Amount (to the nearest dollar)"
                 placeholder="Price to nearest dollar">
             <div class="input-group-append">
                 <span class="input-group-text">.00</span>
@@ -53,7 +53,7 @@
         <div class="alert alert-danger" role="alert">
             Please double check that all information is correct before proceeding
         </div>
-        <button type="button" class="btn btn-success" id="listing_prompt_submit" onclick="window.location.href='listing_page.html'">Submit</button>
+        <button type="button" class="btn btn-success" id="listing_prompt_submit">Submit</button>
     </div>
 
     <div id="navbar-placeholder"></div>
@@ -65,7 +65,7 @@
     <!-- Link to scripts of your own -->
     <script type="module" src="./src/main.js"></script>
     <script type="module" src="./src/listing_page.js"></script>
-
+    <script type="module" src="./src/submit_listing.js"></script>
 </body>
 
 </html>

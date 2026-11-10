@@ -22,7 +22,7 @@ let currentUser = null;
 
 onAuthReady((user) => {
     if (!user) {
-        location.href = "loginSignup.html";
+        location.href = "login.html";
         return;
     }
     currentUser = user;
@@ -34,7 +34,7 @@ async function postReview(e) {
     if (!currentUser) {
         console.error("User needs to be logged in");
         alert("You must be logged in to post a review")
-        location.href = "loginSignup.html";
+        location.href = "login.html";
         return;
     }
 
@@ -44,7 +44,7 @@ async function postReview(e) {
         }
         const rating = Number(document.getElementById("ratingrange").value);
         const details = document.getElementById("review-form-details").value.trim();
-        const reviewerPfp = currentUser.photoURl || "images/avatar%20placeholder.jpg";
+        const reviewerPfp = currentUser.photoURL || "images/avatar%20placeholder.jpg";
 
         if (!rating || !details) {
             alert("Please provide both a rating and a message.");

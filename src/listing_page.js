@@ -1,19 +1,97 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 import { retrieveReview } from "./reviewManager.js";
 
-function PullLink() {
-    let input_link = 'no input_link inputted';
+export function parseTitleFromUrl(url) {
+    if (!url) return '';
+    try {
+        const parts = url.split('/');
+        if (parts.length > 3 && parts[3]) {
+            const titleDashed = parts[3].split('-');
+            return titleDashed.join(' ').trim();
+        }
+    } catch (err) {
+        console.error('error parsing title:', err);
+    }
+    return '';
+}
 
-    // pull the inputted text(the link) from the input field
+export async function findMatchingListing(rawUrl) {
+    if (!rawUrl) return null;
+
+    const parsedTitle = parseTitleFromUrl(rawUrl);
+    const userLink = rawUrl.toLowerCase();
+    const userTitle = parsedTitle.toLowerCase();
+
+    try {
+        const snapshot = await getDocs(collection(db, "listings"));
+        let match = null;
+        let matchId = null;
+
+        snapshot.forEach((docItem) => {
+            const data = docItem.data();
+            const dbUrl = (data.url || '').toLowerCase();
+            const dbName = (data.name || '').toLowerCase();
+
+            if (
+                (dbUrl && userLink.includes(dbUrl)) ||
+                (dbUrl && dbUrl.includes(userLink.split('?')[0])) ||
+                (dbName && userTitle && userTitle.includes(dbName))
+            ) {
+                match = data;
+                matchId = docItem.id;
+            }
+        });
+
+        if (match) {
+            return { id: matchId, ...match };
+        }
+    } catch (err) {
+        console.error("Firestore lookup error in findMatchingListing:", err);
+    }
+    return null;
+}
+
+export async function handleScan() {
     const inputElement = document.getElementById('link_input');
-    if (inputElement) {
-        input_link = inputElement.value;
+    const inputLink = inputElement ? inputElement.value.trim() : '';
+
+    if (!inputLink) {
+        alert("Please paste a product link first.");
+        return;
     }
 
-    // save it for the session
-    sessionStorage.setItem('input_link', input_link);
-    console.log('link inputted: ' + input_link);
+    sessionStorage.setItem('input_link', inputLink);
+    console.log('link inputted:', inputLink);
+
+    const scanButtons = document.querySelectorAll('#scan_button, .scan-button');
+    scanButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.textContent = "Scanning...";
+    });
+
+    try {
+        const match = await findMatchingListing(inputLink);
+        if (match && match.id) {
+            console.log("Product found in database! Redirecting to listing page:", match.id);
+            window.location.href = `listing_page.html?id=${match.id}`;
+        } else {
+            console.log("Product not found in database. Redirecting to listing prompt page.");
+            window.location.href = "listing_prompt.html";
+        }
+    } catch (err) {
+        console.error("Error during scan check:", err);
+        window.location.href = "listing_prompt.html";
+    } finally {
+        scanButtons.forEach(btn => {
+            btn.disabled = false;
+            btn.textContent = "Scan Page";
+        });
+    }
+}
+
+function PullLink() {
+    handleScan();
 }
 
 async function displayReview(listingId) {
@@ -59,101 +137,125 @@ async function displayReview(listingId) {
 }
 
 async function PlaceLink() {
+    const linkPlacing = document.getElementById('link_placing');
+    const nameElement = document.getElementById('product_name');
+
+    // Only run if on listing_page.html or listing_prompt.html
+    if (!linkPlacing && !nameElement) {
+        return;
+    }
+
     console.log("PlaceLink() started");
 
     let saved_link = sessionStorage.getItem('input_link');
     console.log('saved link:', saved_link);
 
-    if (!saved_link) {
-        console.log('no saved link in sessionStorage yet');
-        return;
-    }
-
-    const linkPlacing = document.getElementById('link_placing');
-    if (linkPlacing) {
+    if (saved_link && linkPlacing) {
         linkPlacing.innerHTML = 'Product Link';
         linkPlacing.href = saved_link;
     }
 
-    let parsedTitle = '';
-    try {
-        let title_dashed = saved_link.split('/')[3].split('-');
-        console.log('dashed title:', title_dashed);
-
-        for (let i = 0; i < title_dashed.length; i++) {
-            parsedTitle = parsedTitle + ' ' + title_dashed[i];
-        }
-        parsedTitle = parsedTitle.trim();
-        console.log('parsed title:', parsedTitle);
-
-        const nameElement = document.getElementById('product_name');
-        if (nameElement) {
-            nameElement.innerHTML = parsedTitle;
-            nameElement.value = parsedTitle;
-        }
-    } catch (err) {
-        console.error('error parsing title:', err);
+    let parsedTitle = parseTitleFromUrl(saved_link);
+    if (parsedTitle && nameElement) {
+        nameElement.innerHTML = parsedTitle;
+        nameElement.value = parsedTitle;
     }
 
     try {
-        const snapshot = await getDocs(collection(db, "listings"));
-        console.log('listings found in firestore:', snapshot.docs.length);
+        const params = new URLSearchParams(location.search);
+        const urlId = params.get('id');
 
         let match = null;
-        let currentListingId = null
+        let currentListingId = urlId || null;
 
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-
-            let dbUrl = (data.url || '').toLowerCase();
-            let dbName = (data.name || '').toLowerCase();
-            let userLink = saved_link.toLowerCase();
-            let userTitle = parsedTitle.toLowerCase();
-
-            if ((dbUrl && userLink.includes(dbUrl)) || (dbUrl && dbUrl.includes(userLink.split('?')[0])) || (dbName && userTitle.includes(dbName))) {
-                match = data;
-                currentListingId = doc.id
+        if (urlId) {
+            const docSnap = await getDoc(doc(db, "listings", urlId));
+            if (docSnap.exists()) {
+                match = docSnap.data();
             }
-        });
+        }
 
-        console.log("Current listing ID:", currentListingId)
+        if (!match && saved_link) {
+            const found = await findMatchingListing(saved_link);
+            if (found) {
+                match = found;
+                currentListingId = found.id;
+            }
+        }
+
+        console.log("Current listing ID:", currentListingId);
         if (currentListingId) {
             displayReview(currentListingId);
         }
-        document.getElementById("to-write-review").addEventListener("click", () => {
-            location.href =`review_writing.html?id=${currentListingId}`;
+
+        document.getElementById("to-write-review")?.addEventListener("click", () => {
+            location.href = `review_writing.html?id=${currentListingId}`;
         });
 
-        document.getElementById("to-review-page").addEventListener("click", () => {
-            location.href =`review_page.html?id=${currentListingId}`;
+        document.getElementById("to-review-page")?.addEventListener("click", () => {
+            location.href = `review_page.html?id=${currentListingId}`;
         });
 
         if (match) {
             console.log('match found in database:', match);
-            document.getElementById('product_name').innerText = match.name;
-            document.getElementById('product_price').innerText = match.price;
-            document.getElementById('product_seller').innerText = "Seller: " + match.seller;
-            document.getElementById('reliability_score').innerText = "Score: " + match.reliability_score + " / 100";
-            document.getElementById('product_details').innerText = match.details || "";
-            if (match.image) {
+            if (document.getElementById('product_name')) {
+                document.getElementById('product_name').innerText = match.name;
+            }
+            if (document.getElementById('product_price')) {
+                document.getElementById('product_price').innerText = match.price;
+            }
+            if (document.getElementById('product_seller')) {
+                document.getElementById('product_seller').innerText = "Seller: " + match.seller;
+            }
+            if (document.getElementById('reliability_score')) {
+                document.getElementById('reliability_score').innerText = "Score: " + match.reliability_score + " / 100";
+            }
+            if (document.getElementById('product_details')) {
+                document.getElementById('product_details').innerText = match.details || "";
+            }
+            if (match.image && document.getElementById('product_image')) {
                 document.getElementById('product_image').src = match.image;
             }
         } else {
             console.log('no match found in database, keeping parsed title');
-            document.getElementById('reliability_score').innerText = "Unverified Link";
+            const scoreEl = document.getElementById('reliability_score');
+            if (scoreEl) {
+                scoreEl.innerText = "Unverified Link";
+            }
         }
     } catch (err) {
         console.error('firestore error:', err);
     }
 }
 
+function initListingUI() {
+    const scanBtn = document.getElementById('scan_button');
+    if (scanBtn) {
+        scanBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleScan();
+        });
+    }
 
+    const linkInput = document.getElementById('link_input');
+    if (linkInput) {
+        linkInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleScan();
+            }
+        });
+    }
+
+    PlaceLink();
+}
 
 window.PullLink = PullLink;
 window.PlaceLink = PlaceLink;
+window.handleScan = handleScan;
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', PlaceLink);
+    document.addEventListener('DOMContentLoaded', initListingUI);
 } else {
-    PlaceLink();
+    initListingUI();
 }
