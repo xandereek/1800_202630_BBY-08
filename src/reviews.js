@@ -94,7 +94,7 @@ function initReviewsUI() {
     }
 
     // --- Event Listeners ---
-    writereviewbtn.addEventListener("click", () => {
+    writereviewbtn?.addEventListener("click", () => {
         location.href = `review_writing.html?id=${listingId}`;
     });
 

@@ -2,47 +2,53 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 
 async function LoadNews() {
-    //gather the stuff from firebase
+    // Gather listings from firebase
     const listings = await getDocs(collection(db, "listings"));
 
-    let top_listings = []
-
+    let all_listings = [];
     listings.forEach((doc) => {
-        const data = doc.data();
-
-        if (top_listings.length < 3) {
-            top_listings.push(data);
-        }
-        else {
-            for (i = 0; i < 3; i++) {
-                if (top_listings[i].frequency < data.frequency) {
-                    top_listings[i] = data;
-                }
-            }
-        }
+        all_listings.push({ id: doc.id, ...doc.data() });
     });
+
+    // Sort descending by frequency so the highest-frequency items come first
+    all_listings.sort((a, b) => (b.frequency || 0) - (a.frequency || 0));
+
+    // Take top 3 unique listings
+    const top_listings = all_listings.slice(0, 3);
 
     console.log('Top listings:', top_listings);
 
-    //put the stuff on the news thignys
+    // Populate each carousel slide
     for (let i = 1; i <= top_listings.length; i++) {
-        let current_listing = top_listings[i - 1]
-        console.log('current index:', i)
-        document.getElementById(`news_card_title_${i}`).innerHTML = current_listing.name + ` (${current_listing.price})`
-        document.getElementById(`news_card_body_${i}`).innerHTML = `This product sold by "${current_listing.seller}" Has been inputted the most recently. <br>Heres what we have to say about it: "${current_listing.details}"`
+        let current_listing = top_listings[i - 1];
+        console.log('current index:', i);
 
-        console.log('current score', current_listing.reliability_score)
-        if (current_listing.reliability_score < 25) {
-            document.getElementById(`trust_score_${i}`).innerHTML = `<div class="alert alert-danger" role="alert">Our rating for this listings is: ${current_listing.reliability_score}/100</div>`
+        const titleEl = document.getElementById(`news_card_title_${i}`);
+        if (titleEl) {
+            titleEl.innerHTML = current_listing.name + ` (${current_listing.price})`;
         }
-        else if (current_listing.reliability_score < 50) {
-            document.getElementById(`trust_score_${i}`).innerHTML = `<div class="alert alert-warning" role="alert">Our rating for this listings is: ${current_listing.reliability_score}/100</div>`
+
+        const bodyEl = document.getElementById(`news_card_body_${i}`);
+        if (bodyEl) {
+            bodyEl.innerHTML = `This product sold by "${current_listing.seller}" has been searched frequently.<br>Details: "${current_listing.details}"`;
         }
-        else if (current_listing.reliability_score < 75) {
-            document.getElementById(`trust_score_${i}`).innerHTML = `<div class="alert alert-primary" role="alert">Our rating for this listings is: ${current_listing.reliability_score}/100</div>`
+
+        const scoreEl = document.getElementById(`trust_score_${i}`);
+        if (scoreEl) {
+            if (current_listing.reliability_score < 25) {
+                scoreEl.innerHTML = `<div class="alert alert-danger" role="alert">Our rating for this listing is: ${current_listing.reliability_score}/100</div>`;
+            } else if (current_listing.reliability_score < 50) {
+                scoreEl.innerHTML = `<div class="alert alert-warning" role="alert">Our rating for this listing is: ${current_listing.reliability_score}/100</div>`;
+            } else if (current_listing.reliability_score < 75) {
+                scoreEl.innerHTML = `<div class="alert alert-primary" role="alert">Our rating for this listing is: ${current_listing.reliability_score}/100</div>`;
+            } else {
+                scoreEl.innerHTML = `<div class="alert alert-success" role="alert">Our rating for this listing is: ${current_listing.reliability_score}/100</div>`;
+            }
         }
-        else{
-            document.getElementById(`trust_score_${i}`).innerHTML = `<div class="alert alert-success" role="alert">Our rating for this listings is: ${current_listing.reliability_score}/100</div>`
+
+        const readMoreBtn = document.getElementById(`news_read_more_${i}`);
+        if (readMoreBtn) {
+            readMoreBtn.href = `listing_page.html?id=${current_listing.id}`;
         }
     }
 }
