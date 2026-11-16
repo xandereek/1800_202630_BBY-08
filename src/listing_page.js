@@ -209,6 +209,21 @@ async function PlaceLink() {
             }
             if (document.getElementById('reliability_score')) {
                 document.getElementById('reliability_score').innerText = "Score: " + match.reliability_score + " / 100";
+                if(match.reliability_score < 25){
+                    console.log('less than 25')
+                    document.getElementById('reliability_score').style.setProperty('background-color', '#cf2e2e', 'important');
+                }else if(match.reliability_score <= 50){
+                    document.getElementById('reliability_score').style.setProperty('background-color', '#f5de11', 'important');
+                    document.getElementById('reliability_score').style.setProperty('color', 'black', 'important');
+                    console.log('less than 50')
+                }else if(match.reliability_score <= 75){
+                    document.getElementById('reliability_score').style.setProperty('background-color', 'grey', 'important');
+                    console.log('less than 75')
+                }else{
+                    document.getElementById('reliability_score').style.setProperty('background-color', '#4e9d52', 'important');
+                    console.log('less than 100')
+
+                }
             }
             if (document.getElementById('product_details')) {
                 document.getElementById('product_details').innerText = match.details || "";

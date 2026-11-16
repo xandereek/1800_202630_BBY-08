@@ -9,55 +9,26 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import '../styles/style.css';
+import {onAuthReady} from './authentication.js'
 
 // --- Home Page ---
 // Handles toggling between Home / History / Profile views.
 // using plain DOM APIs for simplicity and maintainability.
 
-function initNavbarUI() {
-    // --- DOM Elements ---
-    const homeview = document.getElementById("homepage");
-    const profileview = document.getElementById("profile");
-    const historyview = document.getElementById("history");
-    const homebtn = document.getElementById("tohome");
-    const profilebtn = document.getElementById("toprofile");
-    const historybtn = document.getElementById("tohistory");
-
-    // --- Helper Functions ---
-    // Toggle element visibility
-    function setVisible(el, visible) {
-        el.classList.toggle('d-none', !visible);
+onAuthReady(function(user){
+    let current_window = window.location.pathname
+    if(!user){
+        console.log('user not signed in');
+        if (current_window != '/index.html'){
+            window.location.href = 'index.html'
+        }
     }
+    else{
+        console.log('user signed in');
+        if (current_window != '/home.html'){
+            window.location.href = 'home.html'
+        }
+        
+    }
+});
 
-    // --- Event Listeners ---
-    // Toggle buttons
-    homebtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        setVisible(profileview, false);
-        setVisible(historyview, false);
-        setVisible(homeview, true);
-    });
-
-    profilebtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        setVisible(profileview, true);
-        setVisible(historyview, false);
-        setVisible(homeview, false);;
-    });
-
-    historybtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        setVisible(profileview, false);
-        setVisible(historyview, true);
-        setVisible(homeview, false);
-    });
-
-    // --- Default View ---
-    setVisible(profileview, false);
-    setVisible(historyview, false);
-    setVisible(homeview, true);
-    
-}
-
-// --- Initialize UI on DOMContentLoaded ---
-document.addEventListener('DOMContentLoaded', initNavbarUI);
