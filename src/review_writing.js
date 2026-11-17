@@ -63,7 +63,7 @@ async function postReview(e) {
         console.log("Review posted!");
         reviewForm.reset();
         alert("Your review has been posted!")
-        location.href = `review_page.html?id=${listingId}`;
+        location.href = `listing_page.html?id=${listingId}`;
     } catch (error) {
         console.error("Error posting review", error);
         alert("Failed to post review. Please try again");

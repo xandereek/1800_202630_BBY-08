@@ -6,24 +6,29 @@ body {
     background-color: black !important;
 }
 
-.carousel-control-next-icon{
-    background-color: rgb(200, 200, 200);
-    opacity: 0.35;
-    border-radius: 10px;
+#news-carousel .carousel-inner {
+    padding: 0 3.25rem 2.75rem;
 }
 
-.carousel-control-prev-icon{
-    background-color: rgb(200, 200, 200);
-    opacity: 0.35;
-    border-radius: 10px;
+#news-carousel .carousel-control-prev,
+#news-carousel .carousel-control-next {
+    width: 3rem;
+    bottom: 2.75rem;
+    opacity: 0.7;
 }
 
-.carousel-control-next-icon:hover{
+#news-carousel .carousel-control-prev:hover,
+#news-carousel .carousel-control-next:hover {
     opacity: 1;
 }
 
-.carousel-control-prev-icon:hover{
-    opacity: 1;
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+    background-color: rgb(108, 117, 125);
+    background-size: 65% 65%;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
 }
 
 #header{
