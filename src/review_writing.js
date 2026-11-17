@@ -14,6 +14,7 @@ import { addReview } from "./reviewManager.js";
 const params = new URLSearchParams(location.search);
 const reviewForm = document.getElementById("review-form");
 const submitbtn = reviewForm.querySelector("button[type='submit']");
+const cancelbtn = document.getElementById("review-form-cancel");
 const listingId = params.get("id");
 
 console.log("Listing ID:", listingId);
@@ -73,5 +74,16 @@ async function postReview(e) {
         }
     }
 };
+
+if (cancelbtn) {
+    cancelbtn.addEventListener("click", () => {
+        reviewForm.reset();
+        if (document.referrer && document.referrer.includes(location.hostname)) {
+            history.back();
+        } else {
+            location.href = `review_page.html?id=${listingId}`;
+        }
+    });
+}
 
 reviewForm.addEventListener("submit", postReview);

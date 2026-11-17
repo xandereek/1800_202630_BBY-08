@@ -1,6 +1,9 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 
+const NEWS_WEIGHT_FREQUENCY = 0.7;
+const NEWS_WEIGHT_SCORE = 0.3;
+
 async function LoadNews() {
     // Gather listings from firebase
     const listings = await getDocs(collection(db, "listings"));
@@ -11,7 +14,11 @@ async function LoadNews() {
     });
 
     // Sort descending by frequency so the highest-frequency items come first
-    all_listings.sort((a, b) => (b.frequency || 0) - (a.frequency || 0));
+    all_listings.sort((a, b) => {
+        let scoreA = (a.frequency || 0) * NEWS_WEIGHT_FREQUENCY + (a.reliability_score || 0) * NEWS_WEIGHT_SCORE;
+        let scoreB = (b.frequency || 0) * NEWS_WEIGHT_FREQUENCY + (b.reliability_score || 0) * NEWS_WEIGHT_SCORE;
+        return scoreB - scoreA;
+    });
 
     // Take top 3 unique listings
     const top_listings = all_listings.slice(0, 3);
@@ -30,7 +37,11 @@ async function LoadNews() {
 
         const bodyEl = document.getElementById(`news_card_body_${i}`);
         if (bodyEl) {
-            bodyEl.innerHTML = `This product sold by "${current_listing.seller}" has been searched frequently.<br>Details: "${current_listing.details}"`;
+            let warningText = "";
+            if (current_listing.reliability_score < 50) {
+                warningText = `<br><strong class="text-danger"> Warning: This trending item has a low reliability score! Proceed with caution.</strong>`;
+            }
+            bodyEl.innerHTML = `This product sold by "${current_listing.seller}" has been searched frequently.<br>Details: "${current_listing.details}"${warningText}`;
         }
 
         const scoreEl = document.getElementById(`trust_score_${i}`);

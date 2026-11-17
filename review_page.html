@@ -49,16 +49,47 @@
 
     <section id="sortpage">
         <a href="#" class="btn btn-primary mb-3" id="back-in-sort">&#8592; Back</a>
-        <div class="card p-3">
-            <h5>Sort Reviews</h5>
-            <p class="text-muted">placeholder for sort</p>
+        <div class="card p-4 shadow-sm">
+            <h5 class="mb-3">Sort Reviews</h5>
+            <form id="sort-form">
+                <div class="mb-3 form-field">
+                    <label for="sort-select" class="form-label">Sort By</label>
+                    <select id="sort-select" class="form-control">
+                        <option value="newest">Newest to Oldest</option>
+                        <option value="oldest">Oldest to Newest</option>
+                        <option value="highest-rating">Highest Rating (100 -> 0)</option>
+                        <option value="lowest-rating">Lowest Rating (0 -> 100)</option>
+                    </select>
+                </div>
+            </form>
         </div>
     </section>
+
     <section id="filterpage">
         <a href="#" class="btn btn-primary mb-3" id="back-in-filter">&#8592; Back</a>
-        <div class="card p-3">
-            <h5>Filter Reviews</h5>
-            <p class="text-muted">placeholder for filter</p>
+        <div class="card p-4 shadow-sm">
+            <h5 class="mb-3">Filter Reviews</h5>
+            <form id="filter-form">
+                <div class="form-label d-block mb-2">Filter by Rating</div>
+                <div class="btn-group-vertical w-100" role="group">
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-all" value="all" checked>
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-all">All Ratings</label>
+                    </div>
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-positive" value="positive">
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-positive">Positive (61 -> 100)</label>
+                    </div>
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-mixed" value="mixed">
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-mixed">Mixed (40 -> 60)</label>
+                    </div>
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-negative" value="negative">
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-negative">Negative (0 -> 39)</label>
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
     </div>

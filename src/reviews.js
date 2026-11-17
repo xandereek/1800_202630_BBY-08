@@ -15,7 +15,25 @@ import { retrieveReview } from './reviewManager';
 // Handles toggling between Re views/ Sort / Filter views.
 // using plain DOM APIs for simplicity and maintainability.
 
+let masterReviews = [];
+
 async function displayAllReviews(listingId) {
+    const reviewContainer = document.getElementById("reviews-page-container");
+
+    if (!reviewContainer) {
+        return;
+    }
+
+    if (masterReviews.length === 0) {
+        const reviews = await retrieveReview(listingId);
+        masterReviews = reviews || [];
+        console.log("Retrieved reviews:", reviews);
+    }
+
+    applySortFilter();
+}
+
+function applySortFilter() {
     const reviewContainer = document.getElementById("reviews-page-container");
     const postCount = document.getElementById("review-page-post-counter");
 
@@ -24,22 +42,45 @@ async function displayAllReviews(listingId) {
     if (!reviewContainer) {
         return;
     }
+    
+    const sortValue = document.getElementById("sort-select")?.value || "newest";
+    const selectedFilter = document.querySelector('input[name="rating-filter"]:checked');
+    const filterValue = selectedFilter ? selectedFilter.value : "all";
 
-    const reviews = await retrieveReview(listingId);
-    console.log("Retrieved reviews:", reviews);
+    let processedReviews = masterReviews.filter(review => {
+        const rating = Number(review.rating);
+        if (filterValue === "positive") return rating >= 61;
+        if (filterValue === "mixed") return rating >= 40 && rating <= 60;
+        if (filterValue === "negative") return rating <= 39;
+        return true;
+    });
+
+
+    processedReviews.sort((a, b) => {
+        const timeA = a.created ? a.created.toMillis() : 0;
+        const timeB = b.created ? b.created.toMillis() : 0;
+        const ratingA = Number(a.rating || 0);
+        const ratingB = Number(b.rating || 0);
+
+        if (sortValue === "newest") return timeB - timeA;
+        if (sortValue === "oldest") return timeA - timeB;
+        if (sortValue === "highest-rating") return ratingB - ratingA;
+        if (sortValue === "lowest-rating") return ratingA - ratingB;
+        return 0;
+    });
 
     if (postCount) {
-        postCount.textContent = `${reviews.length} ${reviews.length === 1 ? 'Post' : 'Posts'}`
+        postCount.textContent = `${processedReviews.length} ${processedReviews.length === 1 ? 'Post' : 'Posts'}`
     }
 
-    if (reviews.length === 0) {
-        reviewContainer.innerHTML = "<p>No reviews yet for this Product.</p>";
+    if (processedReviews.length === 0) {
+        reviewContainer.innerHTML = "<p>No reviews yet or no reviews match your criteria.</p>";
         return;
     }
 
     reviewContainer.innerHTML = "";
 
-    reviews.forEach((review) => {
+    processedReviews.forEach((review) => {
         const reviewCard = document.createElement("div");
         reviewCard.className = "card mb-3 w-100 shadow-sm";
 
@@ -60,8 +101,9 @@ async function displayAllReviews(listingId) {
         `;
 
         reviewContainer.appendChild(reviewCard);
-    });
-}
+    });    
+}          
+
 
 function initReviewsUI() {
 
@@ -136,6 +178,11 @@ function initReviewsUI() {
     setVisible(filterview, false);
     setVisible(reviewview, true);
     setVisible(sortview, false);
+
+    document.getElementById("sort-select")?.addEventListener("change", applySortFilter);
+    document.querySelectorAll('input[name="rating-filter"]').forEach(input => {
+        input.addEventListener("change", applySortFilter);
+    });
 }
 
 // --- Initialize UI on DOMContentLoaded ---
