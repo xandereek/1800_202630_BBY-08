@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My BCIT Project</title>
+    <meta name="comp1800 template" content="My 1800 App">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Other libraries go here -->
+
+</head>
+
+<body>
+
+    <!------------------------------>
+    <!-- Your HTML Layout go here -->
+    <!------------------------------>
+    <!-- Stuff for body goes here -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Placeholder location for the listing -->
+    <div class="container py-4 mb-5" id="review-form-container">
+        <div class="card mb-4" id="review-form-header-info">
+            <div class="card-header text-center">
+                <b>Write a Review</b>
+            </div>
+            <div class="card-body text-center" id="review-form-body-info">
+                <blockquote class="blockquote mb-0">
+                    <p id="review-form-product-name">Product Name</p>
+                    <footer class="blockquote-footer mt-1" id="review-form-product-price">Price</footer>
+                    <a id="review-form-product-url" target="_blank">Loading Link</a>
+                </blockquote>
+            </div>
+        </div>
+
+        <form class="form-field" id="review-form">
+            <label for="ratingrange" class="form-label">Rating</label>
+            <div class="position-relative">
+                <input type="range" class="form-range" min="0" max="100" step="1" id="ratingrange">
+            </div>
+            <small class="form-text">Adjust your rating of this product</small>
+            <label for="review-form-details" class="form-label">Description</label>
+            <textarea class="form-control" id="review-form-details" rows="3"
+                placeholder="e.g. This product was totally fake!" required></textarea>
+            <div class="form-text">
+                Describe your experience (Required)
+            </div>
+            <button type="submit" class="btn btn-primary" id="review-form-post">Post</button>
+            <button type="button" class="btn btn-secondary" id="review-form-cancel">Cancel</button>
+        </form>
+    </div>
+
+    <div id="navbar-placeholder"></div>
+
+    <!---------------------------------------------->
+    <!-- Your own JavaScript functions go here    -->
+    <!---------------------------------------------->
+
+    <!-- Link to scripts of your own -->
+    <script type="module" src="./src/main.js"></script>
+
+    <!-- Bootstrap Javascript for floating Ui bubble tooltip-->
+    <script>
+        const slider = document.getElementById("ratingrange");
+        const container = slider.parentElement;
+        container.style.position = "relative";
+
+
+        const bubble = document.createElement("output");
+        bubble.className =
+            "tooltip bs-tooltip-top show position-absolute";
+
+        const bubbleText = document.createElement("div");
+
+        bubbleText.className = "tooltip-inner";
+        bubble.style.position = "absolute";
+        bubble.style.pointerEvents = "none";
+        bubble.append(bubbleText);
+
+        slider.parentElement.classList.add("position-relative");
+        slider.insertAdjacentElement("afterend", bubble);
+
+        function updateBubble() {
+            const ratio =
+                (slider.value - slider.min) /
+                (slider.max - slider.min);
+
+            bubbleText.textContent = slider.value;
+            bubble.style.left = `calc(${ratio * 100}% - ${ratio * 24}px + 12px)`;
+            bubble.style.top = "-40px";
+            bubble.style.transform = "translateX(-50%)";
+
+            container.style.setProperty(
+                "--bs-range-fill",
+                ratio
+            );
+        }
+
+        slider.addEventListener("input", updateBubble);
+        updateBubble();
+    </script>
+    <!-- <script src="./src/listing_page.js"></script> -->
+    <script type="module" src="./src/review_writing.js"></script>
+</body>
+
+</html>

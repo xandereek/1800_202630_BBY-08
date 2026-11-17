@@ -1,1 +1,43 @@
+body {
+    padding-bottom: 70px;
+}
 
+.carousel-indicators button {
+    background-color: black !important;
+}
+
+#news-carousel .carousel-inner {
+    padding: 0 3.25rem 2.75rem;
+}
+
+#news-carousel .carousel-control-prev,
+#news-carousel .carousel-control-next {
+    width: 3rem;
+    bottom: 2.75rem;
+    opacity: 0.7;
+}
+
+#news-carousel .carousel-control-prev:hover,
+#news-carousel .carousel-control-next:hover {
+    opacity: 1;
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+    background-color: rgb(108, 117, 125);
+    background-size: 65% 65%;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
+}
+
+#header{
+    background-color: rgb(235, 235, 235);
+    padding: 1em 0 1em 0;
+    margin-bottom: 0;
+}
+
+#link_input{
+    height: 75px;
+    font-size: 20px;
+}

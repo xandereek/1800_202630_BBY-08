@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My BCIT Project</title>
+    <meta name="comp1800 template" content="My 1800 App">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Other libraries go here -->
+
+</head>
+
+<body>
+
+    <!------------------------------>
+    <!-- Your HTML Layout go here -->
+    <!------------------------------>
+    <!-- Stuff for body goes here -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <div class="container py-4 mb-5">
+        <section id="expanded-reviews-page">
+            <div id="expanded-reviews-page-header" class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="#" class="btn btn-primary" id="back-in-review">&#8592; Back</a>
+                    <h2 class="m-0">User Reviews</h2>
+                    <div id="filter-sort">
+                        <a href="#" class="btn btn-secondary me-1" id="filterbtn">Filter</a>
+                        <a href="#" class="btn btn-secondary" id="sortbtn">Sort</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviews-inner">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="text-muted m-0" id="review-page-post-counter">4 Posts</p>
+                    <button class="btn btn-primary" id="to-write-review">Write a review</button>
+                </div>
+                <div id="reviews-page-container">
+                    <!-- reviews go here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section id="sortpage">
+        <a href="#" class="btn btn-primary mb-3" id="back-in-sort">&#8592; Back</a>
+        <div class="card p-4 shadow-sm">
+            <h5 class="mb-3">Sort Reviews</h5>
+            <form id="sort-form">
+                <div class="mb-3 form-field">
+                    <label for="sort-select" class="form-label">Sort By</label>
+                    <select id="sort-select" class="form-control">
+                        <option value="newest">Newest to Oldest</option>
+                        <option value="oldest">Oldest to Newest</option>
+                        <option value="highest-rating">Highest Rating (100 -> 0)</option>
+                        <option value="lowest-rating">Lowest Rating (0 -> 100)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section id="filterpage">
+        <a href="#" class="btn btn-primary mb-3" id="back-in-filter">&#8592; Back</a>
+        <div class="card p-4 shadow-sm">
+            <h5 class="mb-3">Filter Reviews</h5>
+            <form id="filter-form">
+                <div class="form-label d-block mb-2">Filter by Rating</div>
+                <div class="btn-group-vertical w-100" role="group">
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-all" value="all" checked>
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-all">All Ratings</label>
+                    </div>
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-positive" value="positive">
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-positive">Positive (61 -> 100)</label>
+                    </div>
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-mixed" value="mixed">
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-mixed">Mixed (40 -> 60)</label>
+                    </div>
+                    <div class="form-field">
+                        <input class="radio" name="rating-filter" type="radio" id="filter-rate-negative" value="negative">
+                        <label class="btn btn-outline-secondary mb-2" for="filter-rate-negative">Negative (0 -> 39)</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    </div>
+    <br><br><br><br>
+
+    <div id="navbar-placeholder"></div>
+
+    <!---------------------------------------------->
+    <!-- Your own JavaScript functions go here    -->
+    <!---------------------------------------------->
+
+    <!-- Link to scripts of your own -->
+    <script type="module" src="./src/main.js"></script>
+    <!-- review page related scripts -->
+    <script type="module" src="./src/reviews.js"></script>
+
+</body>
+
+</html>
