@@ -7,7 +7,7 @@
 // -------------------------------------------------------------
 
 import { db } from "./firebaseConfig.js";
-import { collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
 
 // --- A Manager to handle Review Template and Saving Logic ---
 
@@ -24,6 +24,26 @@ export async function addReview(listingId, userId, rscore, details, userPScore, 
             rating: rscore,
             created: serverTimestamp()
         });
+
+        const snapshot = await getDocs(reviewRef);
+
+        let total = 0;
+        let count = 0;
+        snapshot.forEach((reviewDoc) => {
+            const rating = Number(reviewDoc.data().rating);
+            if (!Number.isNaN(rating)) {
+                total += rating;
+                count++;
+            };
+        })
+
+        if (count > 0) {
+            const averageScore = Math.round(total / count);
+            const listingRef = doc(db, "listings", listingId);
+            await updateDoc(listingRef, {reliability_score: averageScore});
+        };
+
+        
 
         console.log("Successfully Posted Review!");
     } catch (error) {
