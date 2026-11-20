@@ -64,7 +64,9 @@ async function postReview(e) {
         console.log("Review posted!");
         reviewForm.reset();
         alert("Your review has been posted!")
-        location.href = `listing_page.html?id=${listingId}`;
+        location.href = listingId
+            ? `listing_page.html?id=${encodeURIComponent(listingId)}`
+            : "home.html";
     } catch (error) {
         console.error("Error posting review", error);
         alert("Failed to post review. Please try again");
@@ -81,7 +83,9 @@ if (cancelbtn) {
         if (document.referrer && document.referrer.includes(location.hostname)) {
             history.back();
         } else {
-            location.href = `review_page.html?id=${listingId}`;
+            location.href = listingId
+                ? `review_page.html?id=${encodeURIComponent(listingId)}`
+                : "home.html";
         }
     });
 }

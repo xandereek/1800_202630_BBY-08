@@ -189,11 +189,19 @@ async function PlaceLink() {
         }
 
         document.getElementById("to-write-review")?.addEventListener("click", () => {
-            location.href = `review_writing.html?id=${currentListingId}`;
+            if (!currentListingId) {
+                alert("Please scan or select a valid product listing first.");
+                return;
+            }
+            location.href = `review_writing.html?id=${encodeURIComponent(currentListingId)}`;
         });
 
         document.getElementById("to-review-page")?.addEventListener("click", () => {
-            location.href = `review_page.html?id=${currentListingId}`;
+            if (!currentListingId) {
+                alert("Please scan or select a valid product listing first.");
+                return;
+            }
+            location.href = `review_page.html?id=${encodeURIComponent(currentListingId)}`;
         });
 
         if (match) {

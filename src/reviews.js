@@ -123,7 +123,9 @@ function initReviewsUI() {
     const sortbackbtn = document.getElementById("back-in-sort");
     const filterbackbtn = document.getElementById("back-in-filter");
     const writereviewbtn = document.getElementById("to-write-review");
-    const listingRedirectUrl = "listing_page.html";
+    const listingRedirectUrl = listingId
+        ? `listing_page.html?id=${encodeURIComponent(listingId)}`
+        : "home.html";
 
     // --- Helper Functions ---
     // Toggle element visibility
@@ -137,7 +139,12 @@ function initReviewsUI() {
 
     // --- Event Listeners ---
     writereviewbtn?.addEventListener("click", () => {
-        location.href = `review_writing.html?id=${listingId}`;
+        if (!listingId) {
+            alert("No product listing selected.");
+            location.href = "home.html";
+            return;
+        }
+        location.href = `review_writing.html?id=${encodeURIComponent(listingId)}`;
     });
 
     // Toggle buttons
