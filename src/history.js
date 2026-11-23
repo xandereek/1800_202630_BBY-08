@@ -82,8 +82,8 @@ async function loadUserReviewHistory(user) {
 
             reviewCard.innerHTML = `
                 <div class="row g-0">
-                    <div class="col-md-3 d-flex align-items-center justify-content-center p-3">
-                        <img src="${review.pfp || 'images/avatar placeholder.jpg'}" class="img-fluid rounded-start pfp" alt="avatar img">
+                    <div class="col-md-3 d-none d-md-flex align-items-center justify-content-center p-3">
+                        <img src="${review.pfp || 'images/avatar placeholder.jpg'}" class="img-fluid rounded-start w-50" alt="avatar img">
                     </div>
                     <div class="col-md-9">
                         <div class="card-body">
