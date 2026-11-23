@@ -228,8 +228,8 @@ async function PlaceLink() {
             if (document.getElementById('product_details')) {
                 document.getElementById('product_details').innerText = match.details || "";
             }
-            if (match.image && document.getElementById('product_image')) {
-                document.getElementById('product_image').src = match.image;
+            if (match.product_type && document.getElementById('product_image')) {
+                document.getElementById('product_image').src = `https://placehold.co/300x200?text=${match.product_type}`;
             }
         } else {
             console.log('no match found in database, keeping parsed title');

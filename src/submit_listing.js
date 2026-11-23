@@ -11,6 +11,7 @@ async function send_listing() {
     const name = document.getElementById('product_name').value.trim();
     const price = document.getElementById('product_price').value.trim();
     const seller = document.getElementById('product_seller').value.trim();
+    const product_type = document.getElementById('product_type').value.trim();
 
     const url = sessionStorage.getItem('input_link') || '';
 
@@ -21,7 +22,8 @@ async function send_listing() {
         url: url,
         reliability_score: 50,
         frequency: 1,
-        details: "User submitted listing"
+        details: "User submitted listing",
+        product_type: product_type
     };
 
     const listings = collection(db, "listings");
