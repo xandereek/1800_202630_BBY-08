@@ -27,32 +27,37 @@
             <p><strong>It looks like we cant find this product in our data base!</strong></p>
             Please input the following info so we can properly store this site for others refrence.
         </div>
-
-        <a id="link_placing" target="_blank">Loading Link...</a>
+        <div class="mb-3">
+            <a id="link_placing" target="_blank" rel="noopener noreferrer">Loading Link...</a>
+        </div>
 
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
             </div>
-            <input type="text" class="form-control" id="product_name" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-default">
+            <input type="text" class="form-control" id="product_name" aria-label="Product Name"
+                aria-describedby="inputGroup-sizing-default" placeholder="Product name from the listing">
         </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text">$</span>
             </div>
             <input type="text" class="form-control" id="product_price" aria-label="Amount (to the nearest dollar)"
-                placeholder="Price to nearest dollar">
-            <div class="input-group-append">
-                <span class="input-group-text">.00</span>
-            </div>
+                placeholder="Exact price including cents (e.g. 69.99)">
         </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-default">Seller</span>
             </div>
             <input type="text" class="form-control" id="product_seller" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-default" placeholder="ex. Amazon, Best Buy, etc.">
+                aria-describedby="inputGroup-sizing-default" placeholder="Marketplace seller/shipper, not the website (e.g. MAXSUN official)">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Product Type</span>
+            </div>
+            <input type="text" class="form-control" id="product_type" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" placeholder="Category from listing (e.g. GPU, Phone, Laptop)">
         </div>
         <div class="alert alert-danger" role="alert">
             Please double check that all information is correct before proceeding

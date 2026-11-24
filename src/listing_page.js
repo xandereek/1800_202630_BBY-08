@@ -16,6 +16,31 @@ export function parseTitleFromUrl(url) {
     return '';
 }
 
+export function recordVisitedListing(listingId) {
+    if (!listingId) {
+        return;
+    }
+
+    const storedIds = localStorage.getItem("visitedListings");
+    let visitedIds = []
+
+    if (storedIds) {
+        try {
+            const parsedIds = JSON.parse(storedIds);
+            if (Array.isArray(parsedIds)) {
+                visitedIds = parsedIds;
+            }
+        } catch (err) {
+            console.error("No listings previously visited:", err)
+            visitedIds = []
+        }
+    }
+    if (!visitedIds.includes(listingId)) {
+        const updatedstoredIds = [listingId, ...visitedIds];
+        localStorage.setItem("visitedListings", JSON.stringify(updatedstoredIds));
+    }
+}
+
 export async function findMatchingListing(rawUrl) {
     if (!rawUrl) return null;
 
@@ -74,6 +99,7 @@ export async function handleScan() {
         const match = await findMatchingListing(inputLink);
         if (match && match.id) {
             console.log("Product found in database! Redirecting to listing page:", match.id);
+            recordVisitedListing(match.id);
             window.location.href = `listing_page.html?id=${match.id}`;
         } else {
             console.log("Product not found in database. Redirecting to listing prompt page.");
@@ -123,7 +149,7 @@ async function displayReview(listingId) {
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title">${review.reviewer || 'User'}</h5>
+                        <h5 class="card-title">${review.reviewerName || 'User'}</h5>
                         <p class="card-text">${review.details}</p>
                         <p class="card-text"><strong>Rating:</strong> ${review.rating}/100</p>
                         <p class="card-text"><small class="text-body-secondary">Posted: ${review.created && typeof review.created.toDate === 'function' ? review.created.toDate().toLocaleDateString() : 'Recently'}</small></p>
@@ -189,12 +215,24 @@ async function PlaceLink() {
         }
 
         document.getElementById("to-write-review")?.addEventListener("click", () => {
-            location.href = `review_writing.html?id=${currentListingId}`;
+            if (!currentListingId) {
+                alert("Please scan or select a valid product listing first.");
+                return;
+            }
+            location.href = `review_writing.html?id=${encodeURIComponent(currentListingId)}`;
         });
 
         document.getElementById("to-review-page")?.addEventListener("click", () => {
-            location.href = `review_page.html?id=${currentListingId}`;
+            if (!currentListingId) {
+                alert("Please scan or select a valid product listing first.");
+                return;
+            }
+            location.href = `review_page.html?id=${encodeURIComponent(currentListingId)}`;
         });
+
+        if (match && currentListingId) {
+            recordVisitedListing(currentListingId)
+        }
 
         if (match) {
             console.log('match found in database:', match);
@@ -209,17 +247,17 @@ async function PlaceLink() {
             }
             if (document.getElementById('reliability_score')) {
                 document.getElementById('reliability_score').innerText = "Score: " + match.reliability_score + " / 100";
-                if(match.reliability_score < 25){
+                if (match.reliability_score < 25) {
                     console.log('less than 25')
                     document.getElementById('reliability_score').style.setProperty('background-color', '#cf2e2e', 'important');
-                }else if(match.reliability_score <= 50){
+                } else if (match.reliability_score <= 50) {
                     document.getElementById('reliability_score').style.setProperty('background-color', '#f5de11', 'important');
                     document.getElementById('reliability_score').style.setProperty('color', 'black', 'important');
                     console.log('less than 50')
-                }else if(match.reliability_score <= 75){
+                } else if (match.reliability_score <= 75) {
                     document.getElementById('reliability_score').style.setProperty('background-color', 'grey', 'important');
                     console.log('less than 75')
-                }else{
+                } else {
                     document.getElementById('reliability_score').style.setProperty('background-color', '#4e9d52', 'important');
                     console.log('less than 100')
 
@@ -228,8 +266,8 @@ async function PlaceLink() {
             if (document.getElementById('product_details')) {
                 document.getElementById('product_details').innerText = match.details || "";
             }
-            if (match.image && document.getElementById('product_image')) {
-                document.getElementById('product_image').src = match.image;
+            if (match.product_type && document.getElementById('product_image')) {
+                document.getElementById('product_image').src = `https://placehold.co/300x200?text=${match.product_type}`;
             }
         } else {
             console.log('no match found in database, keeping parsed title');
