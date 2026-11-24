@@ -6,6 +6,139 @@ import { db } from "./firebaseConfig.js";
 import { onAuthReady } from "./authentication.js";
 import { deleteReview } from "./reviewManager.js";
 
+async function loadUserListingHistory(user) {
+    const listingHistoryContainer = document.getElementById("listing-history-container");
+    const listingCounter = document.getElementById("listing-counter");
+
+    if (!listingHistoryContainer) {
+        return;
+    }
+
+    // Check if user is logged in
+    if (!user) {
+        listingHistoryContainer.innerHTML = "<p>Please <a href='login.html'>log in</a> to view your listing history.</p>";
+        if (listingCounter) {
+            listingCounter.textContent = "";
+        }
+        return;
+    }
+
+    try {
+        let visitedIds = [];
+        try {
+            // Retrieve visited Listings from local storage
+            const storedIds = localStorage.getItem("visitedListings");
+            const parsedIds = storedIds ? JSON.parse(storedIds) : [];
+
+            if (Array.isArray(parsedIds)) {
+                visitedIds = parsedIds;
+            }
+        } catch (err) {
+            console.error("Could not parse visitedListings form localStorage:", err);
+            visitedIds = [];
+        }
+
+        if (visitedIds.length === 0) {
+            if (listingCounter) {
+                listingCounter.textContent = "0 Visited";
+            }
+            listingHistoryContainer.innerHTML = "<p>You have not viewed any listings yet.</p>";
+            return;
+        }
+
+        const listings = [];
+        for (let i = 0; i < visitedIds.length; i++) {
+            const listingId = visitedIds[i];
+            const listingsnap = await getDoc(doc(db, "listings", listingId));
+            if (listingsnap.exists()) {
+                listings.push({ id: listingId, ...listingsnap.data() });
+            }
+        }
+
+        if (listings.length === 0) {
+            if (listingCounter) {
+                listingCounter.textContent = "0 Visited";
+            }
+            listingHistoryContainer.innerHTML = "<p>You have not viewed any listings yet.</p>";
+            return;
+        }
+
+        if (listingCounter) {
+            listingCounter.textContent = `${listings.length} Visited`;
+        }
+
+        listingHistoryContainer.innerHTML = "";
+
+        for (let i = 0; i < listings.length; i++) {
+            const listing = listings[i];
+            const listingCard = document.createElement("div");
+            listingCard.className = "card mb-3 w-100 shadow-sm";
+
+            listingCard.innerHTML = `
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            <h5 class="card-title">${listing.name}</h5>
+                            <p class="card-text mb-1"><strong>Price:</strong> ${listing.price}</p>
+                            <p class="card-text mb-1"><strong>Seller:</strong> ${listing.seller}</p>
+                            <p class="card-text mb-1"><strong>Type:</strong> ${listing.product_type}</p>
+                            <p class="card-text mb-1"><strong>Score:</strong> ${listing.reliability_score}</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="listing_page.html?id=${listing.id}" class="btn btn-primary btn-sm">View Product Listing</a>
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-listing-history-btn">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            `;
+
+            const deleteBtn = listingCard.querySelector(".delete-listing-history-btn");
+            deleteBtn?.addEventListener("click", () => {
+                if (!window.confirm("Are you sure you want to delete this listing from your history?")) {
+                    return;
+                }
+                deleteBtn.disabled = true;
+                try {
+                    let currentIds = [];
+                    try {
+                        const storedIds = localStorage.getItem("visitedListings");
+                        const parsedIds = storedIds ? JSON.parse(storedIds) : [];
+
+                        if (Array.isArray(parsedIds)) {
+                            currentIds = parsedIds;
+                        }
+                    } catch (err) {
+                        console.error("Could not parse visitedListings from localStorage:", err);
+                        currentIds = [];
+                    }
+
+                    const updatedIds = currentIds.filter((id) => id !== listing.id);
+                    localStorage.setItem("visitedListings", JSON.stringify(updatedIds));
+
+                    listingCard.remove();
+
+                    const remainingIds = listingHistoryContainer.querySelectorAll(".card").length;
+                    if (listingCounter) {
+                        listingCounter.textContent = `${remainingIds} Visited`;
+                    }
+                    if (remainingIds === 0) {
+                        listingHistoryContainer.innerHTML = "<p>You have not viewed any listings yet.</p>";
+                    }
+                } catch (err) {
+                    console.error("Error Removing Listing from history:", err);
+                    deleteBtn.disabled = false;
+                    alert("Failed to delete listing from history. Please try again.");
+                }
+            });
+
+            listingHistoryContainer.appendChild(listingCard);
+        }
+    } catch (err) {
+        console.error("Error loading listing history:", err);
+        listingHistoryContainer.innerHTML = "<p>Error loading listing history. Please try again.</p>";
+    }
+}
+
 async function loadUserReviewHistory(user) {
     const historyContainer = document.getElementById("history-container");
     const counterEl = document.getElementById("history-counter");
@@ -138,4 +271,5 @@ async function loadUserReviewHistory(user) {
 // Run when auth state is resolved
 onAuthReady((user) => {
     loadUserReviewHistory(user);
+    loadUserListingHistory(user);
 });
