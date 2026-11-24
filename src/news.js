@@ -1,9 +1,6 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 
-const NEWS_WEIGHT_FREQUENCY = 0.7;
-const NEWS_WEIGHT_SCORE = 0.3;
-
 async function LoadNews() {
     // Gather listings from firebase
     const listings = await getDocs(collection(db, "listings"));
@@ -13,11 +10,11 @@ async function LoadNews() {
         all_listings.push({ id: doc.id, ...doc.data() });
     });
 
-    // Sort descending by frequency so the highest-frequency items come first
+    // Prioritize popular listings with lower reliability scores
     all_listings.sort((a, b) => {
-        let scoreA = (a.frequency || 0) * NEWS_WEIGHT_FREQUENCY + (a.reliability_score || 0) * NEWS_WEIGHT_SCORE;
-        let scoreB = (b.frequency || 0) * NEWS_WEIGHT_FREQUENCY + (b.reliability_score || 0) * NEWS_WEIGHT_SCORE;
-        return scoreB - scoreA;
+        const riskA = (a.frequency || 0) * (100 - (a.reliability_score ?? 50));
+        const riskB = (b.frequency || 0) * (100 - (b.reliability_score ?? 50));
+        return riskB - riskA;
     });
 
     // Take top 3 unique listings
