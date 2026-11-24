@@ -6,6 +6,8 @@
 // Manages the review-form submission logic
 // -------------------------------------------------------------
 
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "./firebaseConfig.js";
 import { onAuthReady } from "./authentication.js";
 import { addReview } from "./reviewManager.js";
 
@@ -27,6 +29,7 @@ onAuthReady((user) => {
         return;
     }
     currentUser = user;
+    loadListingInfo(currentUser);
 });
 
 async function postReview(e) {
@@ -48,7 +51,7 @@ async function postReview(e) {
         const reviewerPfp = currentUser.photoURL || "images/avatar%20placeholder.jpg";
         const reviewerName = currentUser.displayName || "User";
 
-        if (!rating || !details) {
+        if (Number.isNaN(rating) || !details) {
             alert("Please provide both a rating and a message.");
             return;
         }
@@ -90,6 +93,41 @@ if (cancelbtn) {
                 : "home.html";
         }
     });
+}
+
+async function loadListingInfo() {
+    const name = document.getElementById("review-form-product-name");
+    const price = document.getElementById("review-form-product-price");
+    const url = document.getElementById("review-form-product-url");
+
+    if (!listingId) {
+        return;
+    }
+
+    try {
+        const snap = await getDoc(doc(db, "listings", listingId));
+        console.log(snap.exists());
+        if (!snap.exists()) {
+            return;
+        }
+
+        const listing = snap.data();
+
+        if (name) {
+            name.textContent = listing.name || "Untitled Listing";
+        }
+        if (price) {
+            price.textContent = listing.price !== undefined && listing.price !== null ? `${listing.price}` : "Price: N/A";
+        }
+        if (url) {
+            const targetUrl = listing.url || `listing_page.html?id=${encodeURIComponent(listingId)}`;
+            url.href = targetUrl;
+            url.textContent = listing.url ? "View Source" : "View Listing";
+        }
+    } catch (err) {
+        console.error("Error loading listing info for review form", err);
+        return;
+    }
 }
 
 reviewForm.addEventListener("submit", postReview);
