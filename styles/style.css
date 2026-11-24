@@ -10,6 +10,24 @@ body {
     padding: 0 3.25rem 2.75rem;
 }
 
+#news-carousel .card {
+    height: 320px;
+}
+
+#news-carousel .card-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#news-carousel [id^="trust_score_"] {
+    margin-top: auto;
+}
+
+#news-carousel [id^="trust_score_"] .alert {
+    margin-bottom: 0;
+}
+
 #news-carousel .carousel-control-prev,
 #news-carousel .carousel-control-next {
     width: 3rem;
