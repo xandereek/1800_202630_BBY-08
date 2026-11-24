@@ -3,7 +3,7 @@ import { db } from "./firebaseConfig.js";
 import { recordVisitedListing } from "./listing_page.js";
 
 function formatPrice(value) {
-    const cleanup = value.replace(/,^\$\s*/, "").trim();
+    const cleanup = value.replace(/[$,\s]/g, "");
     const number = Number(cleanup);
     if (!cleanup || Number.isNaN(number) || number < 0) {
         return null;
