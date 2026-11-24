@@ -46,6 +46,7 @@ async function postReview(e) {
         const rating = Number(document.getElementById("ratingrange").value);
         const details = document.getElementById("review-form-details").value.trim();
         const reviewerPfp = currentUser.photoURL || "images/avatar%20placeholder.jpg";
+        const reviewerName = currentUser.displayName || "User";
 
         if (!rating || !details) {
             alert("Please provide both a rating and a message.");
@@ -58,13 +59,16 @@ async function postReview(e) {
             rating,
             details,
             0,
-            reviewerPfp
+            reviewerPfp,
+            reviewerName
         );
 
         console.log("Review posted!");
         reviewForm.reset();
         alert("Your review has been posted!")
-        location.href = `listing_page.html?id=${listingId}`;
+        location.href = listingId
+            ? `listing_page.html?id=${encodeURIComponent(listingId)}`
+            : "home.html";
     } catch (error) {
         console.error("Error posting review", error);
         alert("Failed to post review. Please try again");
@@ -81,7 +85,9 @@ if (cancelbtn) {
         if (document.referrer && document.referrer.includes(location.hostname)) {
             history.back();
         } else {
-            location.href = `review_page.html?id=${listingId}`;
+            location.href = listingId
+                ? `review_page.html?id=${encodeURIComponent(listingId)}`
+                : "home.html";
         }
     });
 }

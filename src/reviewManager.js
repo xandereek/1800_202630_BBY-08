@@ -7,17 +7,38 @@
 // -------------------------------------------------------------
 
 import { db } from "./firebaseConfig.js";
-import { collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { collection, collectionGroup, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // --- A Manager to handle Review Template and Saving Logic ---
 
-export async function addReview(listingId, userId, rscore, details, userPScore, reviewerPfp) {
+export async function recalculateListingScore(listingId) {
+    const reviewRef = collection(db, "listings", listingId, "reviews");
+    const snapshot = await getDocs(reviewRef);
+
+    let total = 0;
+    let count = 0;
+    snapshot.forEach((reviewDoc) => {
+        const rating = Number(reviewDoc.data().rating);
+        if (!Number.isNaN(rating)) {
+            total += rating;
+            count++;
+        }
+    });
+
+    const updatedScore = count > 0 ? Math.round(total / count) : 50;
+    const listingRef = doc(db, "listings", listingId);
+    await updateDoc(listingRef, { reliability_score: updatedScore });
+    return updatedScore;
+}
+
+export async function addReview(listingId, userId, rscore, details, userPScore, reviewerPfp, reviewerName = "User") {
     try {
         // Get reference to "reviews" subcollection
         const reviewRef = collection(db, "listings", listingId, "reviews");
 
         await addDoc(reviewRef, {
             reviewer: userId,
+            reviewerName: reviewerName || "User",
             pfp: reviewerPfp,
             reviewerScore: userPScore,
             details: details,
@@ -25,25 +46,7 @@ export async function addReview(listingId, userId, rscore, details, userPScore, 
             created: serverTimestamp()
         });
 
-        const snapshot = await getDocs(reviewRef);
-
-        let total = 0;
-        let count = 0;
-        snapshot.forEach((reviewDoc) => {
-            const rating = Number(reviewDoc.data().rating);
-            if (!Number.isNaN(rating)) {
-                total += rating;
-                count++;
-            };
-        })
-
-        if (count > 0) {
-            const averageScore = Math.round(total / count);
-            const listingRef = doc(db, "listings", listingId);
-            await updateDoc(listingRef, {reliability_score: averageScore});
-        };
-
-        
+        await recalculateListingScore(listingId);
 
         console.log("Successfully Posted Review!");
     } catch (error) {
@@ -69,3 +72,31 @@ export async function retrieveReview(listingId) {
         return [];
     }
 };
+
+export async function updateReviewerNames(userId, newName) {
+    try {
+        const q = query(
+            collectionGroup(db, "reviews"),
+            where("reviewer", "==", userId)
+        );
+        const snapshot = await getDocs(q);
+        const updates = snapshot.docs.map((reviewDoc) =>
+            updateDoc(reviewDoc.ref, { reviewerName: newName })
+        );
+        await Promise.all(updates);
+    } catch (error) {
+        console.error("Failed to sync reviewer name on existing reviews", error);
+    }
+}
+
+export async function deleteReview(listingId, reviewId) {
+    try {
+        const targetReviewRef = doc(db, "listings", listingId, "reviews", reviewId);
+        await deleteDoc(targetReviewRef);
+        await recalculateListingScore(listingId);
+        console.log("Successfully Deleted Review!");
+    } catch (error) {
+        console.error("Failed to delete review", error);
+        throw error;
+    }
+}

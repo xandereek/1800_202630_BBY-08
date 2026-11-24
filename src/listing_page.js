@@ -123,7 +123,7 @@ async function displayReview(listingId) {
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title">${review.reviewer || 'User'}</h5>
+                        <h5 class="card-title">${review.reviewerName || 'User'}</h5>
                         <p class="card-text">${review.details}</p>
                         <p class="card-text"><strong>Rating:</strong> ${review.rating}/100</p>
                         <p class="card-text"><small class="text-body-secondary">Posted: ${review.created && typeof review.created.toDate === 'function' ? review.created.toDate().toLocaleDateString() : 'Recently'}</small></p>
@@ -189,11 +189,19 @@ async function PlaceLink() {
         }
 
         document.getElementById("to-write-review")?.addEventListener("click", () => {
-            location.href = `review_writing.html?id=${currentListingId}`;
+            if (!currentListingId) {
+                alert("Please scan or select a valid product listing first.");
+                return;
+            }
+            location.href = `review_writing.html?id=${encodeURIComponent(currentListingId)}`;
         });
 
         document.getElementById("to-review-page")?.addEventListener("click", () => {
-            location.href = `review_page.html?id=${currentListingId}`;
+            if (!currentListingId) {
+                alert("Please scan or select a valid product listing first.");
+                return;
+            }
+            location.href = `review_page.html?id=${encodeURIComponent(currentListingId)}`;
         });
 
         if (match) {
