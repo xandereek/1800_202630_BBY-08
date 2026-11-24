@@ -1,5 +1,6 @@
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
+import { recordVisitedListing } from "./listing_page.js";
 
 async function send_listing() {
     const submitBtn = document.getElementById('listing_prompt_submit');
@@ -29,6 +30,7 @@ async function send_listing() {
     const listings = collection(db, "listings");
 
     const docRef = await addDoc(listings, new_listing);
+    recordVisitedListing(docRef.id);
 
     console.log("Created listing ID:", docRef.id);
 
