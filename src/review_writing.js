@@ -46,6 +46,7 @@ async function postReview(e) {
         const rating = Number(document.getElementById("ratingrange").value);
         const details = document.getElementById("review-form-details").value.trim();
         const reviewerPfp = currentUser.photoURL || "images/avatar%20placeholder.jpg";
+        const reviewerName = currentUser.displayName || "User";
 
         if (!rating || !details) {
             alert("Please provide both a rating and a message.");
@@ -58,7 +59,8 @@ async function postReview(e) {
             rating,
             details,
             0,
-            reviewerPfp
+            reviewerPfp,
+            reviewerName
         );
 
         console.log("Review posted!");

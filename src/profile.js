@@ -1,5 +1,6 @@
 import { updateProfile } from 'firebase/auth';
 import { onAuthReady, logoutUser } from './authentication.js';
+import { updateReviewerNames } from './reviewManager.js';
 
 let currentUser = null;
 
@@ -69,6 +70,7 @@ profileForm?.addEventListener('submit', async (event) => {
     saveBtn.disabled = true;
     try {
         await updateProfile(currentUser, { displayName: updatedName });
+        await updateReviewerNames(currentUser.uid, updatedName);
         nameInput.disabled = true;
         showHeader(currentUser);
         showAlert('Profile updated!', 'success');

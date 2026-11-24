@@ -9,13 +9,23 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import '../styles/style.css';
-import { retrieveReview } from './reviewManager';
+import { retrieveReview, deleteReview } from './reviewManager.js';
+import { onAuthReady } from './authentication.js';
 
 // ---Expanded Reviews Page ---
 // Handles toggling between Re views/ Sort / Filter views.
 // using plain DOM APIs for simplicity and maintainability.
 
 let masterReviews = [];
+let currentUser = null;
+let activeListingId = null;
+
+onAuthReady((user) => {
+    currentUser = user;
+    if (masterReviews.length > 0) {
+        applySortFilter();
+    }
+});
 
 async function displayAllReviews(listingId) {
     const reviewContainer = document.getElementById("reviews-page-container");
@@ -83,6 +93,7 @@ function applySortFilter() {
     processedReviews.forEach((review) => {
         const reviewCard = document.createElement("div");
         reviewCard.className = "card mb-3 w-100 shadow-sm";
+        const isOwner = Boolean(currentUser && review.reviewer === currentUser.uid);
 
         reviewCard.innerHTML = `
             <div class="row g-0">
@@ -91,14 +102,36 @@ function applySortFilter() {
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title">${review.reviewer || 'User'}</h5>
+                        <h5 class="card-title">${review.reviewerName || 'User'}</h5>
                         <p class="card-text">${review.details}</p>
                         <p class="card-text"><strong>Rating:</strong> ${review.rating}/100</p>
                         <p class="card-text"><small class="text-body-secondary">Posted: ${review.created && typeof review.created.toDate === 'function' ? review.created.toDate().toLocaleDateString() : 'Recently'}</small></p>
+                        ${isOwner ? '<button type="button" class="btn btn-outline-danger btn-sm delete-review-btn">Delete</button>' : ''}
                     </div>
                 </div>
             </div>           
         `;
+
+        if (isOwner) {
+            const deleteBtn = reviewCard.querySelector(".delete-review-btn");
+            deleteBtn?.addEventListener("click", async () => {
+                if (!window.confirm("Are you sure you want to delete this review?")) {
+                    return;
+                }
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = "Deleting...";
+                try {
+                    await deleteReview(activeListingId, review.id);
+                    masterReviews = masterReviews.filter((r) => r.id !== review.id);
+                    applySortFilter();
+                } catch (err) {
+                    console.error("Error deleting review:", err);
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = "Delete";
+                    alert("Failed to delete review. Please try again.");
+                }
+            });
+        }
 
         reviewContainer.appendChild(reviewCard);
     });    
@@ -110,6 +143,7 @@ function initReviewsUI() {
     // --- Information for Review Posting ---
     const params = new URLSearchParams(location.search);
     const listingId = params.get("id");
+    activeListingId = listingId;
 
     console.log("Listing ID:", listingId);
 

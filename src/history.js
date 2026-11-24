@@ -4,6 +4,7 @@ import '../styles/style.css';
 import { collectionGroup, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 import { onAuthReady } from "./authentication.js";
+import { deleteReview } from "./reviewManager.js";
 
 async function loadUserReviewHistory(user) {
     const historyContainer = document.getElementById("history-container");
@@ -91,11 +92,39 @@ async function loadUserReviewHistory(user) {
                             <p class="card-text">${review.details}</p>
                             <p class="card-text"><strong>Rating:</strong> ${review.rating}/100</p>
                             <p class="card-text"><small class="text-body-secondary">Posted: ${dateStr}</small></p>
-                            <a href="listing_page.html?id=${review.listingId}" class="btn btn-primary btn-sm">View Product Listing</a>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="listing_page.html?id=${review.listingId}" class="btn btn-primary btn-sm">View Product Listing</a>
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-review-btn">Delete</button>
+                            </div>
                         </div>
                     </div>
                 </div>           
             `;
+
+            const deleteBtn = reviewCard.querySelector(".delete-review-btn");
+            deleteBtn?.addEventListener("click", async () => {
+                if (!window.confirm("Are you sure you want to delete this review?")) {
+                    return;
+                }
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = "Deleting...";
+                try {
+                    await deleteReview(review.listingId, review.id);
+                    reviewCard.remove();
+                    const remaining = historyContainer.querySelectorAll(".card").length;
+                    if (counterEl) {
+                        counterEl.textContent = `${remaining} ${remaining === 1 ? 'Post' : 'Posts'}`;
+                    }
+                    if (remaining === 0) {
+                        historyContainer.innerHTML = "<p>You have not posted any reviews yet.</p>";
+                    }
+                } catch (err) {
+                    console.error("Error deleting review from history:", err);
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = "Delete";
+                    alert("Failed to delete review. Please try again.");
+                }
+            });
 
             historyContainer.appendChild(reviewCard);
         }
