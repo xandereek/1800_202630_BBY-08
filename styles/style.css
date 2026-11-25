@@ -1,61 +1,139 @@
-body {
-    padding-bottom: 70px;
+:root {
+    /* ---------- 1. SafeShop design palette ---------- */
+
+    /* 60% Background */
+    --background: #FFF0F5;
+
+    /* 30% Primary and secondary */
+    --primary: #03258B;
+    --secondary: #C77DFF;
+
+    /* 10% Accent */
+    --accent: #53F8EA;
+
+    /* Font */
+    --font: "Agrave Pro", system-ui, sans-serif;
+
+    /* ---------- 2. Bootstrap variables ---------- */
+
+    --bs-body-bg: var(--background);
+    --bs-body-font-family: var(--font);
 }
 
-.carousel-indicators button {
-    background-color: black !important;
+/* ---------- 3. Bootstrap colour utilities ---------- */
+
+.bg-primary {
+    background-color: var(--primary) !important;
 }
 
-#news-carousel .carousel-inner {
-    padding: 0 3.25rem 2.75rem;
+.text-primary {
+    color: var(--primary) !important;
 }
 
-#news-carousel .card {
-    height: 320px;
+.bg-secondary {
+    background-color: var(--secondary) !important;
 }
 
-#news-carousel .card-body {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+.text-secondary {
+    color: var(--secondary) !important;
 }
 
-#news-carousel [id^="trust_score_"] {
-    margin-top: auto;
+.bg-accent {
+    background-color: var(--accent) !important;
 }
 
-#news-carousel [id^="trust_score_"] .alert {
-    margin-bottom: 0;
+/* ---------- 4. Bootstrap buttons ---------- */
+
+/* Primary buttons */
+.btn-primary {
+    --bs-btn-bg: var(--primary);
+    --bs-btn-border-color: var(--primary);
+    --bs-btn-color: white;
+
+    --bs-btn-hover-bg: #021B68;
+    --bs-btn-hover-border-color: #021B68;
+    --bs-btn-hover-color: white;
+
+    --bs-btn-active-bg: var(--primary);
+    --bs-btn-active-border-color: var(--primary);
+    --bs-btn-active-color: white;
 }
 
-#news-carousel .carousel-control-prev,
-#news-carousel .carousel-control-next {
-    width: 3rem;
-    bottom: 2.75rem;
-    opacity: 0.7;
+/* Secondary buttons */
+.btn-secondary {
+    --bs-btn-bg: var(--secondary);
+    --bs-btn-border-color: var(--secondary);
+    --bs-btn-color: #03258B;
+
+    --bs-btn-hover-bg: #B45FF0;
+    --bs-btn-hover-border-color: #B45FF0;
+    --bs-btn-hover-color: white;
+
+    --bs-btn-active-bg: var(--secondary);
+    --bs-btn-active-border-color: var(--secondary);
+    --bs-btn-active-color: #03258B;
 }
 
-#news-carousel .carousel-control-prev:hover,
-#news-carousel .carousel-control-next:hover {
-    opacity: 1;
+/* Success buttons */
+.btn-success {
+    --bs-btn-bg: var(--accent);
+    --bs-btn-border-color: var(--accent);
+    --bs-btn-color: #03258B;
+
+    --bs-btn-hover-bg: #35DCCD;
+    --bs-btn-hover-border-color: #35DCCD;
+    --bs-btn-hover-color: #03258B;
+
+    --bs-btn-active-bg: var(--accent);
+    --bs-btn-active-border-color: var(--accent);
+    --bs-btn-active-color: #03258B;
 }
 
-.carousel-control-next-icon,
-.carousel-control-prev-icon {
-    background-color: rgb(108, 117, 125);
-    background-size: 65% 65%;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 10px;
+/* ---------- User Reviews page ---------- */
+
+#reviews-container {
+    background-color: var(--background);
 }
 
-#header{
-    background-color: rgb(235, 235, 235);
-    padding: 1em 0 1em 0;
-    margin-bottom: 0;
+#reviews-container .card {
+    background-color: white;
+    border: 1px solid var(--secondary);
+    border-radius: 12px;
 }
 
-#link_input{
-    height: 75px;
-    font-size: 20px;
+#reviews-container h5,
+#reviews-container h4 {
+    color: var(--primary);
+}
+
+#reviews-container .rating {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* ---------- Filter and Sort Reviews ---------- */
+
+#filter-reviews,
+#sort-reviews {
+    background-color: white;
+    border: 1px solid var(--secondary);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+#filter-reviews h5,
+#sort-reviews h5 {
+    color: var(--primary);
+}
+
+#filter-reviews select,
+#sort-reviews select {
+    border: 1px solid var(--secondary);
+    border-radius: 6px;
+}
+
+#filter-reviews select:focus,
+#sort-reviews select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(3, 37, 139, 0.15);
 }
